@@ -14,18 +14,29 @@
             <th>Category</th>
             <th>Price</th>
             <th>Quantity</th>
-            <th>Total Amount</th>
+             <th>Action</th>
         </tr>
         @foreach (var product in Model)
         {
             <tr>
                 <td>@product.ProductName &nbsp;</td>
                 <td>@product.Category &nbsp;</td>
-                <td>@product.Price \</td>
-                <td><input type="number" id="@("quantity_" + product.ProductID)" name="@("quantity_" + product.ProductID)" value="0" onchange="calculateTotalAmount('@product.ProductID')" /></td>
-                <td><span id="@("totalAmount_" + product.ProductID)">0</span></td>
+                <td>@product.Price\</td>
+                <td><input type="number" id="quantity_@product.ProductID" min="0" value="0" /></td>
+                <td><button onclick="addToTotal('@product.ProductID', @product.Price)">Add</button></td>
             </tr>
         }
     </table>
+    <br>
     <p>Total Amount: <span id="totalAmount"></span></p>
+
+    <script>
+        var totalAmount = 0;
+
+        function addToTotal(productId, price) {
+            var quantity = parseInt(document.getElementById('quantity_' + productId).value);
+            totalAmount += quantity * price;
+            document.getElementById('totalAmount').innerText = totalAmount;
+        }
+    </script>
 }
