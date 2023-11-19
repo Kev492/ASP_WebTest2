@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\AspWebTest2.props" />
+</Project>

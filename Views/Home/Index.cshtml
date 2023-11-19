@@ -1,0 +1,24 @@
+﻿<!-- Views/Home/Index.cshtml -->
+@model AspWebTest2.Models.Customer
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-controller="Customer" asp-action="GetCustomerDetails" method="post">
+    <label for="customerId">Customer ID:</label>
+    <input type="text" id="customerId" name="customerId" required />
+    <button type="submit">Get Details</button>
+</form>
+
+@if (Model != null)
+{
+    <h3>Customer Details:</h3>
+    <p>Customer ID: @Model.CustomerID</p>
+    <p>Name: @Model.FirstName @Model.LastName</p>
+
+    <!-- Add a link to navigate to the Products page -->
+    <a asp-controller="Product" asp-action="Index" asp-route-customerId="@Model.CustomerID">상품 보기</a>
+}

@@ -1,0 +1,31 @@
+@model List<AspWebTest2.Models.Product>
+
+@{
+    ViewData["Title"] = "Products Page";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table>
+        <tr>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total Amount</th>
+        </tr>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.ProductName &nbsp;</td>
+                <td>@product.Category &nbsp;</td>
+                <td>@product.Price \</td>
+                <td><input type="number" id="@("quantity_" + product.ProductID)" name="@("quantity_" + product.ProductID)" value="0" onchange="calculateTotalAmount('@product.ProductID')" /></td>
+                <td><span id="@("totalAmount_" + product.ProductID)">0</span></td>
+            </tr>
+        }
+    </table>
+    <p>Total Amount: <span id="totalAmount"></span></p>
+}
