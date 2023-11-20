@@ -1,4 +1,4 @@
-@model List<AspWebTest2.Models.Product>
+@model Tuple<List<AspWebTest2.Models.Product>, AspWebTest2.Models.Customer>
 
 @{
     ViewData["Title"] = "Products Page";
@@ -6,22 +6,25 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@if (Model != null && Model.Count > 0)
+@if (Model != null && Model.Item1 != null && Model.Item1.Count > 0)
 {
+    <p>Customer ID: @Model.Item2.CustomerID</p>
+    <p>Customer Name: @Model.Item2.FirstName @Model.Item2.LastName</p>
+
     <table>
         <tr>
             <th>Product Name</th>
             <th>Category</th>
             <th>Price</th>
             <th>Quantity</th>
-             <th>Action</th>
+            <th>Action</th>
         </tr>
-        @foreach (var product in Model)
+        @foreach (var product in Model.Item1)
         {
             <tr>
                 <td>@product.ProductName &nbsp;</td>
                 <td>@product.Category &nbsp;</td>
-                <td>@product.Price\</td>
+                <td>@product.Price</td>
                 <td><input type="number" id="quantity_@product.ProductID" min="0" value="0" /></td>
                 <td><button onclick="addToTotal('@product.ProductID', @product.Price)">Add</button></td>
             </tr>
@@ -29,14 +32,53 @@
     </table>
     <br>
     <p>Total Amount: <span id="totalAmount"></span></p>
+    <br>
+    <button onclick="buy()">BUY</button>
 
     <script>
-        var totalAmount = 0;
+    var totalAmount = 0;
+    var cart = [];
+    var customerId = "@Model.Item2.CustomerID"
 
-        function addToTotal(productId, price) {
-            var quantity = parseInt(document.getElementById('quantity_' + productId).value);
-            totalAmount += quantity * price;
-            document.getElementById('totalAmount').innerText = totalAmount;
-        }
-    </script>
+    function addToTotal(productId, price) {
+    var quantity = parseInt(document.getElementById('quantity_' + productId).value, 10) || 0;
+
+    console.log('productId:', productId);
+    console.log('price:', price);
+    console.log('quantity:', quantity);
+
+    // Add the product to the cart array (if quantity is greater than 0)
+    if (quantity > 0) {
+        cart.push({ productId: productId, quantity: quantity, price: price });
+    }
+
+    totalAmount += quantity * price;
+
+    document.getElementById('totalAmount').innerText = totalAmount;
+    }
+
+    function buy() {
+        // Make an AJAX request to the ProductController's ProcessOrder action
+        // Pass the customer ID and the cart array (containing product details)
+            
+
+        $.ajax({
+            type: "POST",
+            url: "/Product/Buy",
+            data: {
+                customerId: customerId,
+                totalAmount: totalAmount
+            },
+            success: function (response) {
+                // Handle the success response, e.g., redirect to a confirmation page
+                console.log(response);
+                alert("Order placed successfully! Order ID: " + response.orderId);
+            },
+            error: function (error) {
+                // Handle the error response
+                console.error(error);
+            }
+        });
+    }
+</script>
 }
